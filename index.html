@@ -379,7 +379,7 @@
         async function callGeminiTextApiWithBackoff(prompt, retries = 3, delay = 1000) {
             // FIX: Removed reference to 'google' object.
             // When running this file on your computer, you MUST insert your own API key here.
-            const apiKey = ""; // <--- PASTE YOUR GOOGLE AI API KEY HERE
+            const apiKey = "AIzaSyDdZ1MJjl61SM--g48-nSVo4ccHuY0a62E"; // <--- PASTE YOUR GOOGLE AI API KEY HERE
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             // FIXED: Added a strict responseSchema to ensure valid JSON
@@ -456,7 +456,7 @@
         async function callGeminiImageApiWithBackoff(prompt, imageBase64, mimeType, retries = 3, delay = 1000) {
             // FIX: Removed reference to 'google' object.
             // When running this file on your computer, you MUST insert your own API key here.
-            const apiKey = ""; // <--- PASTE YOUR GOOGLE AI API KEY HERE
+            const apiKey = "AIzaSyDdZ1MJjl61SM--g48-nSVo4ccHuY0a62E"; // <--- PASTE YOUR GOOGLE AI API KEY HERE
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
 
             const payload = {
