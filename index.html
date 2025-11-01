@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro AI ID Card Generator</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide icons --><script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://i.imgur.com/L79E0rD.jpeg'); /* Your NEW provided background image */
+            background-size: cover; /* Cover the entire background */
+            background-attachment: fixed; /* Keep background fixed when scrolling */
+            background-position: center center; /* Center the background image */
+            background-repeat: no-repeat; /* Do not repeat the background image */
+        }
+        /* Simple spinner animation */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Custom styles for input fields */
+        .form-input {
+            @apply w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white;
+        }
+        .form-label {
+            @apply block text-sm font-medium text-gray-700 mb-1;
+        }
+        /* Style for file input button */
+        .form-input[type="file"] {
+            @apply p-0;
+        }
+        .form-input[type="file"]::file-selector-button {
+            @apply mr-4 py-3 px-4 rounded-l-lg border-0 text-sm font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 cursor-pointer;
+        }
+        /* Style for the button spinner */
+        .spinner-button {
+            border-left-color: transparent !important;
+            border-right-color: transparent !important;
+            border-bottom-color: transparent !important;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header --><nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center h-16">
+          <i data-lucide="scan-face" class="h-8 w-8 text-indigo-600"></i>
+          <span class="ml-3 text-2xl font-bold text-gray-900">Pro ID Generator</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content --><main class="py-12 sm:py-16">
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl w-full max-w-2xl mx-auto">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-indigo-600">Pro AI ID Card Generator</h1>
+                <p class="text-gray-600 mt-2">Enter the details, upload a photo, and describe the style you want, or let AI generate details for you!</p>
+            </header>
+
+            <!-- ID Card Form --><form id="idCardForm" class="space-y-6">
+                <!-- New Auto-Generate Button --><div class="mb-6">
+                    <button type="button" id="autoGenerateButton" class="w-full bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 ease-in-out flex items-center justify-center">
+                        <span id="autoGenButtonText">Auto-Generate Student Details</span>
+                        <span id="autoGenButtonIconContainer" class="ml-2 h-5 w-5">
+                            <i data-lucide="zap" class="h-5 w-5"></i>
+                        </span>
+                    </button>
+                </div>
+                <!-- End Auto-Generate Button --><div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="studentName" class="form-label">Student Name</label>
+                        <input type="text" id="studentName" class="form-input" placeholder="e.g., Budi Hartono" required>
+                    </div>
+                    <div>
+                        <label for="studentId" class="form-label">Student ID</label>
+                        <input type="text" id="studentId" class="form-input" placeholder="e.g., GSI-10293" required>
+                    </div>
+                </div>
+
+                <!-- New File Upload Section --><div>
+                    <label for="studentPhoto" class="form-label">Student Photo</label>
+                    <div class="flex items-center space-x-4">
+                        <img id="photoPreview" src="https://placehold.co/100x100/e2e8f0/cbd5e1?text=Preview" alt="Photo Preview" class="w-24 h-24 rounded-lg object-cover border border-gray-200 flex-shrink-0">
+                        <!-- UPDATED: Added application/pdf to accept attribute --><input type="file" id="studentPhoto" class="form-input" accept="image/png, image/jpeg, application/pdf" required>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Upload a clear, square photo for the best result. (JPG or PNG only)</p>
+                </div>
+                <!-- End New File Upload Section --><div>
+                    <label for="institution" class="form-label">Institution</label>
+                    <!-- FIXED: Added "Universitas School" to placeholder --><input type="text" id="institution" class="form-input" placeholder="e.g., Global University Alliance, Universitas School" required>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" id="dob" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="expDate" class="form-label">Expiration Date</label>
+                        <input type="date" id="expDate" class="form-input" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="nationality" class="form-label">Nationality</label>
+                    <select id="nationality" class="form-input">
+                        <option value="">Select Nationality</option> <!-- Added default blank option --><option value="Indonesian">Indonesia</option>
+                        <option value="Indian">India</option>
+                        <option value="Bangladeshi">Bangladesh</option>
+                        <option value="Other">Other (Type Below)</option>
+                    </select>
+                    <input type="text" id="nationalityOther" class="form-input mt-2 hidden" placeholder="Enter nationality">
+                </div>
+
+                <div>
+                    <label for="stylePrompt" class="form-label">Style Prompt</label>
+                    <textarea id="stylePrompt" rows="3" class="form-input" placeholder="Describe the ID card's appearance (e.g., 'A professional blue and gold university ID', 'A simple high school ID for a student from India', 'Modern design with a green theme')"></textarea>
+                    <p class="text-xs text-gray-500 mt-1">This tells the AI how to design your card.</p>
+                </div>
+
+                <!-- Submit Button --><button type="submit" id="generateButton" class="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 ease-in-out flex items-center justify-center">
+                    <span id="buttonText">Generate ID Card</span>
+                    <!-- Container for the icon/spinner --><span id="buttonIconContainer" class="ml-2 h-5 w-5">
+                        <i id="buttonIcon" data-lucide="sparkles" class="h-5 w-5"></i>
+                    </span>
+                </button>
+            </form>
+
+            <!-- Loading, Error, and Result Sections --><div id="loadingIndicator" class="text-center py-6 hidden">
+                <div class="spinner mx-auto"></div>
+                <p class="text-gray-600 mt-4">Generating your ID card... This may take a moment.</p>
+            </div>
+
+            <div id="errorMessage" class="text-center py-4 px-6 bg-red-100 text-red-700 rounded-lg mt-6 hidden">
+                <!-- Error message will be inserted here --></div>
+
+            <div id="resultContainer" class="mt-8 text-center hidden">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Generated ID Card</h2>
+                <img id="generatedImage" src="" alt="Generated ID Card" class="w-full max-w-lg mx-auto rounded-lg shadow-lg border border-gray-200">
+                <a id="downloadLink" href="#" download="generated-id-card.png" class="mt-6 inline-flex items-center justify-center bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 ease-in-out">
+                    <i data-lucide="download" class="mr-2 h-5 w-5"></i>
+                    Download Image
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer --><footer class="bg-gray-100 border-t border-gray-200 mt-16">
+      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-sm text-gray-500">&copy; 2025 Pro ID Generator. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- All JavaScript is now embedded inside this HTML file --><script type="module">
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Get DOM elements
+        const form = document.getElementById('idCardForm');
+        const generateButton = document.getElementById('generateButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonIconContainer = document.getElementById('buttonIconContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultContainer = document.getElementById('resultContainer');
+        const generatedImage = document.getElementById('generatedImage');
+        const downloadLink = document.getElementById('downloadLink');
+        const nationalitySelect = document.getElementById('nationality');
+        const nationalityOtherInput = document.getElementById('nationalityOther');
+        const studentPhotoInput = document.getElementById('studentPhoto');
+        const photoPreview = document.getElementById('photoPreview');
+
+        // New elements for auto-generate
+        const autoGenerateButton = document.getElementById('autoGenerateButton');
+        const autoGenButtonText = document.getElementById('autoGenButtonText');
+        const autoGenButtonIconContainer = document.getElementById('autoGenButtonIconContainer');
+
+        let uploadedImageBase64 = null; // Variable to store the base64 image data
+
+        // Show/hide 'Other' nationality input
+        nationalitySelect.addEventListener('change', () => {
+            if (nationalitySelect.value === 'Other') {
+                nationalityOtherInput.classList.remove('hidden');
+                nationalityOtherInput.required = true;
+            } else {
+                nationalityOtherInput.classList.add('hidden');
+                nationalityOtherInput.required = false;
+            }
+        });
+
+        // Handle file input change for photo preview
+        studentPhotoInput.addEventListener('change', () => {
+            const file = studentPhotoInput.files[0];
+            // UPDATED: Added logic to handle different file types
+            if (file) {
+                if (file.type === 'image/png' || file.type === 'image/jpeg') {
+                    // Handle valid image files
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        photoPreview.src = e.target.result;
+                        uploadedImageBase64 = e.target.result.split(',')[1];
+                        photoPreview.classList.remove('border-red-500', 'border-2'); // Clear error border
+                    };
+                    reader.readAsDataURL(file);
+                    errorMessage.classList.add('hidden'); // Hide error if a valid file is uploaded
+                } else if (file.type === 'application/pdf') {
+                    // Handle PDF files
+                    showError("PDF files cannot be used as a photo. Please upload an image file (.jpg or .png).");
+                    studentPhotoInput.value = null; // Clear the input
+                    photoPreview.src = "https://placehold.co/100x100/e2e8f0/cbd5e1?text=Preview";
+                    uploadedImageBase64 = null;
+                    photoPreview.classList.add('border-red-500', 'border-2'); // Add error border
+                } else {
+                    // Handle other invalid file types
+                    showError("Invalid file type. Please upload a .jpg, .png, or .pdf file.");
+                    studentPhotoInput.value = null; // Clear the input
+                    photoPreview.src = "https://placehold.co/100x100/e2e8f0/cbd5e1?text=Preview";
+                    uploadedImageBase64 = null;
+                    photoPreview.classList.add('border-red-500', 'border-2'); // Add error border
+                }
+            } else {
+                // No file selected
+                studentPhotoInput.value = null;
+                photoPreview.src = "https://placehold.co/100x100/e2e8f0/cbd5e1?text=Preview";
+                uploadedImageBase64 = null;
+                photoPreview.classList.remove('border-red-500', 'border-2'); // Clear error border
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            generateIdCard();
+        });
+
+        // Handle auto-generate button click
+        autoGenerateButton.addEventListener('click', generateTextDetails);
+
+
+        // Function to call the AI model for text generation
+        async function generateTextDetails() {
+            setAutoLoading(true);
+            errorMessage.classList.add('hidden');
+
+            // FIXED: Simplified prompt, will rely on the schema
+            const textPrompt = `
+                Generate realistic student ID card details.
+                The student can be from Indonesia, India, or Bangladesh.
+                The institution should be a realistic university or school name, like "Universitas School" or "Dhaka Institute of Technology".
+                The student ID should look official, e.g., GSI-XXXXX.
+                Dates should be realistic.
+            `;
+
+            try {
+                const generatedData = await callGeminiTextApiWithBackoff(textPrompt);
+                if (generatedData) {
+                    // Populate the form fields
+                    document.getElementById('studentName').value = generatedData.studentName || '';
+                    document.getElementById('studentId').value = generatedData.studentId || '';
+                    document.getElementById('institution').value = generatedData.institution || '';
+                    document.getElementById('dob').value = generatedData.dob || '';
+                    document.getElementById('expDate').value = generatedData.expDate || '';
+                    
+                    // Set nationality, handling 'Other' case
+                    const nationalityOption = Array.from(nationalitySelect.options).find(option => option.value === generatedData.nationality);
+                    if (nationalityOption) {
+                        nationalitySelect.value = generatedData.nationality;
+                        nationalityOtherInput.classList.add('hidden');
+                        nationalityOtherInput.required = false;
+                    } else {
+                        nationalitySelect.value = 'Other';
+                        nationalityOtherInput.value = generatedData.nationality;
+                        nationalityOtherInput.classList.remove('hidden');
+                        nationalityOtherInput.required = true;
+                    }
+                } else {
+                    showError("Could not auto-generate details. Please try again or fill them manually.");
+                }
+            } catch (error) {
+                console.error("Error auto-generating details:", error);
+                showError(`An error occurred during auto-generation: ${error.message}.`);
+            } finally {
+                setAutoLoading(false);
+            }
+        }
+
+        // Function to call the AI model for image generation
+        async function generateIdCard() {
+            // 1. Reset UI
+            setLoading(true);
+            errorMessage.classList.add('hidden');
+            resultContainer.classList.add('hidden');
+
+            // 2. Get form data
+            const studentName = document.getElementById('studentName').value;
+            const studentId = document.getElementById('studentId').value;
+            const institution = document.getElementById('institution').value;
+            const dob = document.getElementById('dob').value;
+            const expDate = document.getElementById('expDate').value;
+            const stylePrompt = document.getElementById('stylePrompt').value;
+            
+            let nationality = nationalitySelect.value;
+            if (nationality === 'Other') {
+                nationality = nationalityOtherInput.value;
+            }
+
+            // 3. Basic Validation
+            if (!studentName || !studentId || !institution || !dob || !expDate || !nationality) {
+                showError("Please fill in all required text fields, or use 'Auto-Generate Details'.");
+                setLoading(false);
+                return;
+            }
+
+            // Check for photo upload
+            if (!uploadedImageBase64) {
+                showError("Please upload a student photo.");
+                photoPreview.classList.add('border-red-500', 'border-2'); // Add error border to photo preview
+                setLoading(false);
+                return;
+            }
+
+            // 4. Construct the prompt for the Gemini image generation model
+            const fullPrompt = `
+                Create a high-quality, professional, realistic student ID card using the provided photo.
+                The card's design should be based on this style: "${stylePrompt || 'a standard, modern university ID card'}".
+                The ID card MUST legibly and clearly include the following text:
+                - STUDENT NAME: ${studentName}
+                - STUDENT ID: ${studentId}
+                - INSTITUTION: ${institution}
+                - DATE OF BIRTH: ${dob}
+                - NATIONALITY: ${nationality}
+                - EXPIRATION DATE: ${expDate}
+                
+                The card must also include a barcode or QR code.
+                Do not include any other placeholder text like '[Your Name Here]'. Use the exact text provided above.
+                Place the provided image as the student's main photo on the ID card.
+            `;
+
+            // 5. Call the API with exponential backoff
+            try {
+                const base64ImageData = await callGeminiImageApiWithBackoff(
+                    fullPrompt,
+                    uploadedImageBase64,
+                    studentPhotoInput.files[0].type // Pass the mime type (e.g., 'image/jpeg')
+                );
+
+                if (base64ImageData) {
+                    // 6. Display the result
+                    const imageUrl = `data:image/png;base64,${base64ImageData}`;
+                    generatedImage.src = imageUrl;
+                    downloadLink.href = imageUrl;
+                    resultContainer.classList.remove('hidden');
+                } else {
+                    showError("The AI could not generate an image. This might be due to a restrictive prompt or an API error. Please try a different style prompt.");
+                }
+            } catch (error) {
+                console.error("Error generating ID card:", error);
+                showError(`An error occurred: ${error.message}. Please check the console for details.`);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Function to call Gemini (TEXT) API with retry logic
+        async function callGeminiTextApiWithBackoff(prompt, retries = 3, delay = 1000) {
+            // FIX: Removed reference to 'google' object.
+            // When running this file on your computer, you MUST insert your own API key here.
+            const apiKey = ""; // <--- PASTE YOUR GOOGLE AI API KEY HERE
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            // FIXED: Added a strict responseSchema to ensure valid JSON
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "studentName": { "type": "STRING" },
+                            "studentId": { "type": "STRING" },
+                            "institution": { "type": "STRING" },
+                            "dob": { "type": "STRING", "description": "Date in YYYY-MM-DD format" },
+                            "expDate": { "type": "STRING", "description": "Date in YY-MM-DD format" },
+                            "nationality": { "type": "STRING" }
+                        },
+                        required: ["studentName", "studentId", "institution", "dob", "expDate", "nationality"]
+                    },
+                    temperature: 0.7,
+                },
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        // FIX: Safely parse error response
+                        let errorBodyText;
+                        try {
+                            errorBodyText = await response.text();
+                            const errorBody = JSON.parse(errorBodyText);
+                            throw new Error(`API Error (${response.status}): ${errorBody.error?.message || errorBodyText}`);
+                        } catch (e) {
+                            // JSON parsing failed, just use the raw text if available
+                            throw new Error(`API Error (${response.status}): ${errorBodyText || response.statusText}`);
+                        }
+                    }
+
+                    const result = await response.json();
+                    
+                    const jsonString = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (jsonString) {
+                        try {
+                            // The response is already parsed JSON because of responseMimeType
+                            return JSON.parse(jsonString);
+                        } catch (parseError) {
+                            console.error("Failed to parse JSON from AI response:", parseError, jsonString);
+                            throw new Error("AI generated invalid JSON. Trying again...");
+                        }
+                    } else {
+                        console.error("API response for text generation contained no text part:", JSON.stringify(result, null, 2));
+                        throw new Error("AI returned no text data for details generation.");
+                    }
+
+                } catch (error) {
+                    console.warn(`Attempt ${i + 1} for text generation failed: ${error.message}`);
+                    if (i === retries - 1) {
+                        throw error;
+                    }
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+            return null;
+        }
+
+
+        // Function to call Gemini (IMAGE) API with retry logic
+        async function callGeminiImageApiWithBackoff(prompt, imageBase64, mimeType, retries = 3, delay = 1000) {
+            // FIX: Removed reference to 'google' object.
+            // When running this file on your computer, you MUST insert your own API key here.
+            const apiKey = ""; // <--- PASTE YOUR GOOGLE AI API KEY HERE
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        {
+                            inlineData: {
+                                mimeType: mimeType, // e.g., 'image/jpeg' or 'image/png'
+                                data: imageBase64
+                            }
+                        }
+                    ]
+                }],
+                generationConfig: {
+                    // FIXED: Use responseModalities for this model
+                    responseModalities: ["IMAGE"]
+                },
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        // FIX: Safely parse error response
+                        let errorBodyText;
+                        try {
+                            errorBodyText = await response.text();
+                            const errorBody = JSON.parse(errorBodyText);
+                            throw new Error(`API Error (${response.status}): ${errorBody.error?.message || errorBodyText}`);
+                        } catch (e) {
+                            // JSON parsing failed, just use the raw text if available
+                            throw new Error(`API Error (${response.status}): ${errorBodyText || response.statusText}`);
+                        }
+                    }
+
+                    const result = await response.json();
+                    
+                    // Add check for text-only error response from image model
+                    const textPart = result?.candidates?.[0]?.content?.parts?.find(p => p.text);
+                    const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                    if (base64Data) {
+                        return base64Data;
+                    } else if (textPart) {
+                         console.error("API returned a text-only response:", textPart.text);
+                        throw new Error(`AI returned a text error: ${textPart.text}`);
+                    }
+                    else {
+                        console.error("API Response was OK but contained no image data:", JSON.stringify(result, null, 2));
+                        throw new Error("API returned no image data. The prompt might be too sensitive or the response format was unexpected.");
+                    }
+
+                } catch (error) {
+                    console.warn(`Attempt ${i + 1} for image generation failed: ${error.message}`);
+                    if (i === retries - 1) {
+                        throw error;
+                    }
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+            return null;
+        }
+
+        // Helper function to update UI state for main generation button
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loadingIndicator.classList.remove('hidden');
+                generateButton.disabled = true;
+                buttonText.textContent = 'Generating...';
+                buttonIconContainer.innerHTML = '<div class="spinner-button h-5 w-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>';
+            } else {
+                loadingIndicator.classList.add('hidden');
+                generateButton.disabled = false;
+                buttonText.textContent = 'Generate ID Card';
+                buttonIconContainer.innerHTML = '<i id="buttonIcon" data-lucide="sparkles" class="h-5 w-5"></i>';
+                lucide.createIcons();
+            }
+        }
+
+        // Helper function to update UI state for auto-generate button
+        function setAutoLoading(isLoading) {
+            if (isLoading) {
+                autoGenerateButton.disabled = true;
+                autoGenButtonText.textContent = 'Generating Details...';
+                autoGenButtonIconContainer.innerHTML = '<div class="spinner-button h-5 w-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>';
+            } else {
+                autoGenerateButton.disabled = false;
+                autoGenButtonText.textContent = 'Auto-Generate Student Details';
+                autoGenButtonIconContainer.innerHTML = '<i data-lucide="zap" class="h-5 w-5"></i>';
+                lucide.createIcons();
+            }
+        }
+        
+        // Helper to show error messages
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
